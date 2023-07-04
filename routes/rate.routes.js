@@ -8,6 +8,6 @@ const rateController = new RateController(db);
 
 const router = express.Router();
 
-router.get("/", rateController.getAll);
+router.get("/", rateController.getHistoricalRates);
 
 module.exports = router;
