@@ -1,4 +1,13 @@
 const axios = require("axios");
+const db = require("../db/models/index");
+const {
+  CRYPTO,
+  CRYPTO_CURRENCY,
+  FIAT_CURRENCY,
+  FIAT,
+} = require("../utils/constants");
+
+const { rate } = db;
 
 const getExchangeRate = async (currency, type) => {
   const response = await axios.get(
@@ -7,13 +16,13 @@ const getExchangeRate = async (currency, type) => {
   const returnResponse = {};
   const { rates } = response.data.data;
 
-  if (type === "crypto") {
+  if (type === CRYPTO) {
     returnResponse[`${currency}`] = {
       USD: rates.USD,
       SGD: rates.SGD,
       EUR: rates.EUR,
     };
-  } else if (type === "fiat") {
+  } else if (type === FIAT) {
     returnResponse[`${currency}`] = {
       BTC: rates.BTC,
       DOGE: rates.DOGE,
@@ -25,8 +34,7 @@ const getExchangeRate = async (currency, type) => {
 };
 
 const getExchangeRates = async (type) => {
-  const currencies =
-    type === "crypto" ? ["BTC", "DOGE", "ETC"] : ["USD", "SGD", "EUR"];
+  const currencies = type === CRYPTO ? CRYPTO_CURRENCY : FIAT_CURRENCY;
   let rates = {};
   for (const currency of currencies) {
     const rate = await getExchangeRate(currency, type);
@@ -36,4 +44,39 @@ const getExchangeRates = async (type) => {
   return rates;
 };
 
-module.exports = getExchangeRates;
+const updateExchangeRates = async () => {
+  try {
+    const cryptoRates = await getExchangeRates(CRYPTO);
+    const fiatRates = await getExchangeRates(FIAT);
+    const cryptoCurrencies = Object.keys(cryptoRates);
+    const fiatCurrencies = Object.keys(fiatRates);
+    const timestamp = new Date();
+
+    for (const cryptoCurrency of cryptoCurrencies) {
+      for (const fiat of FIAT_CURRENCY) {
+        console.log(cryptoCurrency);
+        await rate.create({
+          baseCurrency: cryptoCurrency,
+          targetCurrency: fiat,
+          conversion: cryptoRates[`${cryptoCurrency}`][`${fiat}`],
+          createdAt: timestamp,
+        });
+      }
+    }
+    for (const fiatCurrency of fiatCurrencies) {
+      for (const crypto of CRYPTO_CURRENCY) {
+        console.log(fiatCurrency);
+        await rate.create({
+          baseCurrency: fiatCurrency,
+          targetCurrency: crypto,
+          conversion: fiatRates[`${fiatCurrency}`][`${crypto}`],
+          createdAt: timestamp,
+        });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+module.exports = updateExchangeRates;

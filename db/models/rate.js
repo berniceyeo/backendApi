@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       id: {
         primaryKey: true,
         type: DataTypes.INTEGER,
+        autoIncrement: true,
       },
       baseCurrency: { type: DataTypes.STRING, field: "base_currency" },
       targetCurrency: { type: DataTypes.STRING, field: "target_currency" },
