@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       baseCurrency: { type: DataTypes.STRING, field: "base_currency" },
       targetCurrency: { type: DataTypes.STRING, field: "target_currency" },
       conversion: DataTypes.STRING,
-      createdAt: DataTypes.DATE,
+      createdAt: DataTypes.BIGINT,
       updatedAt: DataTypes.DATE,
     },
     {

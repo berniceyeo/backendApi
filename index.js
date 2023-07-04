@@ -15,7 +15,7 @@ app.listen(port, () => {
   console.log("App is listening on port 5000");
 });
 
-// cron.schedule(" * * * * *", async () => {
-//   console.log("Calling to update table");
-//   await updateExchangeRates();
-// });
+cron.schedule(" * * * * *", async () => {
+  console.log("Calling to update table");
+  await updateExchangeRates();
+});
