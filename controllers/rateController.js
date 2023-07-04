@@ -1,4 +1,5 @@
 const { Op } = require("sequelize");
+const { ALL_CURRENCY } = require("../utils/constants");
 
 class RateController {
   constructor(db) {
@@ -12,11 +13,18 @@ class RateController {
         !req.query.target_currency ||
         !req.query.start
       ) {
-        res.status(400).json({ error: true, msg: "Missing require params" });
+        return res
+          .send(400)
+          .json({ error: true, msg: "Missing require params" });
       }
 
       const baseCurrency = req.query.base_currency;
       const targetCurrency = req.query.target_currency;
+
+      if (!ALL_CURRENCY.includes(baseCurrency)) {
+        return res.status(400).json({ error: true, msg: "Invalid params" });
+      }
+
       const start = Number(req.query.start);
       const end = req.query.end ? Number(req.query.end) : new Date().getTime();
       const output = await this.model.findAll({

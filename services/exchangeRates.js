@@ -51,7 +51,6 @@ const updateExchangeRates = async () => {
     const cryptoCurrencies = Object.keys(cryptoRates);
     const fiatCurrencies = Object.keys(fiatRates);
     const timestamp = new Date().getTime();
-    console.log(timestamp);
 
     for (const cryptoCurrency of cryptoCurrencies) {
       for (const fiat of FIAT_CURRENCY) {
